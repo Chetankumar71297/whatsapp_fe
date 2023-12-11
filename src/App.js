@@ -1,13 +1,18 @@
-import { CallIcon } from "./svg";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./Pages/home";
+import Login from "./Pages/login";
+import Register from "./Pages/register";
+
 function App() {
   return (
     <div className="dark">
-      <h1 className="dark:bg-dark_bg_1">
-        <p className="text-black dark:text-white">
-          styled from variables in tailwind.config file
-        </p>
-      </h1>
-      <h1 className="customh1">i am already styled in index.css</h1>
+      <Router>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
