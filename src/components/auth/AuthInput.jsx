@@ -11,6 +11,7 @@ export default function AuthInput({
         {placeholder}
       </label>
       <input
+        id={name}
         className="w-full dark:bg-dark_bg_3 text-base py-2 px-4 rounded-lg outline-none"
         type={type}
         placeholder={placeholder}
