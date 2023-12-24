@@ -10,6 +10,9 @@ export default function Picture({
   const handlePicture = (e) => {
     setError("");
     let pic = e.target.files[0];
+    if (!pic) {
+      return;
+    }
     if (
       pic?.type !== "image/jpeg" &&
       pic?.type !== "image/png" &&
