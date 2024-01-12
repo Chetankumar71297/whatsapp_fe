@@ -25,9 +25,10 @@
   .input {
     @apply w-full dark:bg-dark_bg_2 p-1.5 dark:text-dark_text_1 rounded-lg flex-1 outline-none;
   }
-  .convo {
+  .convos {
     height: calc(100vh-220px);
     overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
