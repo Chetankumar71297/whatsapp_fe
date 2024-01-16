@@ -7,7 +7,7 @@ const initialState = {
   status: "",
   error: "",
   conversation: [],
-  activeConversation: [],
+  activeConversation: {},
   notification: [],
 };
 
