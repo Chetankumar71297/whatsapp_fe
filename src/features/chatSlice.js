@@ -26,6 +26,26 @@ export const getConversation = createAsyncThunk(
     }
   }
 );
+export const openCreateConversation = createAsyncThunk(
+  "conversation/open_create",
+  async (values, { rejectWithValue }) => {
+    const { token, receiver_id } = values;
+    try {
+      const { data } = await axios.post(
+        CONVERSATION_ENDPOINT,
+        { receiver_id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.error.message);
+    }
+  }
+);
 
 export const chatSlice = createSlice({
   name: "chat",
@@ -46,6 +66,18 @@ export const chatSlice = createSlice({
         state.conversation = action.payload;
       })
       .addCase(getConversation.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(openCreateConversation.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(openCreateConversation.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.error = "";
+        state.activeConversation = action.payload;
+      })
+      .addCase(openCreateConversation.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });
