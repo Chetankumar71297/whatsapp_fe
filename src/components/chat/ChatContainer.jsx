@@ -21,7 +21,7 @@ export default function ChatContainer() {
       dispatch(getConversationMessages(values));
     }
   }, [activeConversation]);
-  console.log(messages);
+
   return (
     <div className="relative w-full h-full border-l dark:border-l-dark_border_2 select-none overflow-hidden">
       {/*Container*/}
