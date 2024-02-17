@@ -142,6 +142,15 @@ export const chatSlice = createSlice({
         state.status = "succeeded";
         state.error = "";
         state.messages = [...state.messages, action.payload];
+        let conversation = {
+          ...action.payload.conversation,
+          latestMessage: action.payload,
+        };
+        let newConvos = [...state.conversation].filter(
+          (c) => c._id !== conversation._id
+        );
+        newConvos.unshift(conversation);
+        state.conversation = newConvos;
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.status = "failed";
