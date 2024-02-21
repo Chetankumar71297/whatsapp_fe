@@ -2,9 +2,14 @@ import EmojiPicker from "emoji-picker-react";
 import { CloseIcon, EmojiIcon } from "../../../svg";
 import { useEffect, useState } from "react";
 
-export default function EmojiPickerApp({ message, setMessage, inputRef }) {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
+export default function EmojiPickerApp({
+  message,
+  setMessage,
+  showEmojiPicker,
+  setShowEmojiPicker,
+  setShowAttachments,
+  inputRef,
+}) {
   const [cursorPosition, setCursorPosition] = useState();
 
   //change the cursor position in the input field
@@ -28,7 +33,10 @@ export default function EmojiPickerApp({ message, setMessage, inputRef }) {
       <button
         className="btn"
         type="button"
-        onClick={() => setShowEmojiPicker((prev) => !prev)}
+        onClick={() => {
+          setShowAttachments(false);
+          setShowEmojiPicker((prev) => !prev);
+        }}
       >
         {showEmojiPicker ? (
           <CloseIcon className="dark:fill-dark_svg_1" />
