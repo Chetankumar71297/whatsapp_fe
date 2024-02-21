@@ -8,7 +8,7 @@ export default function Sidebar() {
   const [searchResults, setSearchResults] = useState([]);
 
   return (
-    <div className="w-[40%] h-full select-none">
+    <div className="flex0030 max-w-[40%] h-full select-none">
       {/*sidebar header*/}
       <SidebarHeader />
       {/*notification*/}
