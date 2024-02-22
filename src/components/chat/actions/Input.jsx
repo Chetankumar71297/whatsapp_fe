@@ -4,7 +4,6 @@ import { forwardRef } from "react";
 const Input = forwardRef(({ message, setMessage }, ref) => {
   const onChangeHandler = (e) => {
     setMessage(e.target.value);
-    console.log(message);
   };
 
   return (
