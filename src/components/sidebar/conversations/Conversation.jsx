@@ -3,8 +3,9 @@ import { dateHandler } from "../../../utils/date";
 import { openCreateConversation } from "../../../features/chatSlice";
 import { getConversationId } from "../../../utils/chat";
 import { capitalize } from "../../../utils/string";
+import SocketContext from "../../../context/SocketContext";
 
-export default function Conversation({ convo }) {
+function Conversation({ convo, socket }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
@@ -13,8 +14,9 @@ export default function Conversation({ convo }) {
     token,
     receiver_id: getConversationId(user, convo.users),
   };
-  const openConversation = () => {
-    dispatch(openCreateConversation(values));
+  const openConversation = async () => {
+    let newConvo = await dispatch(openCreateConversation(values));
+    socket.emit("join conversation", newConvo.payload._id);
   };
   return (
     <li
@@ -69,3 +71,12 @@ export default function Conversation({ convo }) {
     </li>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const ConversationWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <Conversation {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ConversationWithSocket;
