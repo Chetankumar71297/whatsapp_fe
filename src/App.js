@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { io } from "socket.io-client";
+import SocketContext from "./context/SocketContext";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
@@ -18,25 +19,29 @@ function App() {
 
   return (
     <div className="dark">
-      <Router>
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={token ? <Home /> : <Navigate to="/login" />}
-          />
-          <Route
-            exact
-            path="/login"
-            element={!token ? <Login /> : <Navigate to="/" />}
-          />
-          <Route
-            exact
-            path="/register"
-            element={!token ? <Register /> : <Navigate to="/" />}
-          />
-        </Routes>
-      </Router>
+      <SocketContext.Provider value={socket}>
+        <Router>
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                token ? <Home socket={socket} /> : <Navigate to="/login" />
+              }
+            />
+            <Route
+              exact
+              path="/login"
+              element={!token ? <Login /> : <Navigate to="/" />}
+            />
+            <Route
+              exact
+              path="/register"
+              element={!token ? <Register /> : <Navigate to="/" />}
+            />
+          </Routes>
+        </Router>
+      </SocketContext.Provider>
     </div>
   );
 }

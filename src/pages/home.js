@@ -3,8 +3,9 @@ import { Sidebar } from "../components/sidebar";
 import { useEffect } from "react";
 import { getConversation } from "../features/chatSlice";
 import { ChatContainer, WhatsappHome } from "../components/chat";
+import SocketContext from "../context/SocketContext";
 
-export default function Home() {
+function Home({ socket }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
@@ -27,3 +28,12 @@ export default function Home() {
     </div>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const HomeWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <Home {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default HomeWithSocket;
