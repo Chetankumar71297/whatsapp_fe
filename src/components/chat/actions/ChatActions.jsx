@@ -6,8 +6,9 @@ import { SendIcon } from "../../../svg";
 import { Attachments } from "./attachments";
 import EmojiPickerApp from "./EmojiPicker";
 import Input from "./Input";
+import SocketContext from "../../../context/SocketContext";
 
-export default function ChatActions() {
+function ChatActions({ socket }) {
   const [showAttachments, setShowAttachments] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef(null);
@@ -24,10 +25,14 @@ export default function ChatActions() {
     files: [],
     token,
   };
-  const SendMessageHandler = (e) => {
+  const SendMessageHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
-    dispatch(sendMessage(values));
+    let newMsg = await dispatch(sendMessage(values));
+
+    //after sender receives his own massage in response, know its time to send message in realtime to receiver or receivers(in case of group chat)
+    socket.emit("send message", newMsg.payload);
+
     setMessage("");
     setLoading(false);
   };
@@ -68,3 +73,12 @@ export default function ChatActions() {
     </form>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const ChatActionsWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <ChatActions {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ChatActionsWithSocket;
