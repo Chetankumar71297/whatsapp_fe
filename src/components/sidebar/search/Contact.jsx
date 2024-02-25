@@ -1,8 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { openCreateConversation } from "../../../features/chatSlice";
+import SocketContext from "../../../context/SocketContext";
 
-export default function Contact({ contact, setSearchResults }) {
+function Contact({ contact, setSearchResults, socket }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { token } = user;
@@ -11,7 +12,8 @@ export default function Contact({ contact, setSearchResults }) {
     receiver_id: contact._id,
   };
   const openConversation = async () => {
-    await dispatch(openCreateConversation(values));
+    let newConvo = await dispatch(openCreateConversation(values));
+    socket.emit("join conversation", newConvo.payload._id);
     setSearchResults([]);
   };
   return (
@@ -53,3 +55,12 @@ export default function Contact({ contact, setSearchResults }) {
     </li>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const ContactWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <Contact {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ContactWithSocket;
