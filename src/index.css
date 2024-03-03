@@ -40,6 +40,9 @@
     overflow-x: hidden;
   }
 }
+.online {
+  border: 3px solid #00a884;
+}
 
 /*----Animations----*/
 .rotateAnimation {

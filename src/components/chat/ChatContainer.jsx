@@ -4,8 +4,9 @@ import ChatMessages from "./messages/ChatMessages";
 import { useEffect } from "react";
 import { getConversationMessages } from "../../features/chatSlice";
 import { ChatActions } from "./actions";
+import { checkOnlineStatus } from "../../utils/chat";
 
-export default function ChatContainer() {
+export default function ChatContainer({ onlineUsers }) {
   const dispatch = useDispatch();
 
   const { activeConversation } = useSelector((state) => state.chat);
@@ -28,7 +29,13 @@ export default function ChatContainer() {
       {/*Container*/}
       <div>
         {/*Chat header*/}
-        <ChatHeader />
+        <ChatHeader
+          online={checkOnlineStatus(
+            onlineUsers,
+            user,
+            activeConversation.users
+          )}
+        />
         {/*chat messages*/}
         <ChatMessages />
         {/*chat actions*/}
