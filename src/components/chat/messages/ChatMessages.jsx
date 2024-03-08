@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
 import Message from "./Message";
 import { useEffect, useRef } from "react";
+import TypingStatusShower from "./TypingStatusShower";
 
-export default function ChatMessages() {
-  const { messages } = useSelector((state) => state.chat);
+export default function ChatMessages({ typing, convoIdInTypingEvent }) {
+  const { messages, activeConversation } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
 
   const scrollToThisRef = useRef(null); //keep ref of div to which scrolling will take place
@@ -33,7 +34,12 @@ export default function ChatMessages() {
               me={user._id === message.sender._id}
             />
           ))}
-        <div ref={scrollToThisRef}></div>
+        {typing && convoIdInTypingEvent === activeConversation._id ? (
+          <TypingStatusShower />
+        ) : (
+          ""
+        )}
+        <div className="mt-10" ref={scrollToThisRef}></div>
         {/*Chat will automatically scrolled to this div.Without this we have to manually scroll every time if messages go to the bottom of screen*/}
       </div>
     </div>
