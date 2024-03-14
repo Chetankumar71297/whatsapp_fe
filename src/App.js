@@ -16,7 +16,8 @@ const socket = io(process.env.REACT_APP_API_ENDPOINT.split("/api/v1")[0]);
 function App() {
   const { user } = useSelector((state) => state.user);
   const { token } = user;
-
+  const { files } = useSelector((state) => state.chat);
+  console.log("files", files);
   return (
     <div className="dark">
       <SocketContext.Provider value={socket}>
