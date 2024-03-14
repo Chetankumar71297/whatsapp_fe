@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { getConversationMessages } from "../../features/chatSlice";
 import { ChatActions } from "./actions";
 import { checkOnlineStatus } from "../../utils/chat";
+import FilesPreview from "./preview/files/FilesPreview";
 
 export default function ChatContainer({
   onlineUsers,
@@ -13,7 +14,7 @@ export default function ChatContainer({
 }) {
   const dispatch = useDispatch();
 
-  const { activeConversation } = useSelector((state) => state.chat);
+  const { activeConversation, files } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.user);
 
   const { token } = user;
@@ -40,13 +41,19 @@ export default function ChatContainer({
             activeConversation.users
           )}
         />
-        {/*chat messages*/}
-        <ChatMessages
-          typing={typing}
-          convoIdInTypingEvent={convoIdInTypingEvent}
-        />
-        {/*chat actions*/}
-        <ChatActions />
+        {files.length > 0 ? (
+          <FilesPreview />
+        ) : (
+          <>
+            {/*chat messages*/}
+            <ChatMessages
+              typing={typing}
+              convoIdInTypingEvent={convoIdInTypingEvent}
+            />
+            {/*chat actions*/}
+            <ChatActions />
+          </>
+        )}
       </div>
     </div>
   );

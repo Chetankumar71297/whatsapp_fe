@@ -139,6 +139,7 @@ export const chatSlice = createSlice({
         state.status = "succeeded";
         state.error = "";
         state.activeConversation = action.payload;
+        state.files = [];
       })
       .addCase(openCreateConversation.rejected, (state, action) => {
         state.status = "failed";
