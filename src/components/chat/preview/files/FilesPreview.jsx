@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "./Header";
 import FileViewer from "./FileViewer";
 import Input from "./Input";

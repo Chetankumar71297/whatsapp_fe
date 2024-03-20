@@ -39,9 +39,12 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-}
-.online {
-  border: 3px solid #00a884;
+  .online {
+    border: 3px solid #00a884;
+  }
+  .hview {
+    height: calc(100vh-280px);
+  }
 }
 
 /*----Animations----*/
