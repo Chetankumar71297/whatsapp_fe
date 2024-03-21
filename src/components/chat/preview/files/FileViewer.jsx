@@ -6,9 +6,9 @@ export default function FileViewer({ activeIndex }) {
     <div className="w-full max-w-[60%]">
       {/*container */}
       <div className="flex justify-center items-center">
-        {files[0].type === "IMAGE" ? (
+        {files[activeIndex].type === "IMAGE" ? (
           <img
-            src={files[0].fileData}
+            src={files[activeIndex].fileData}
             alt=""
             className="max-w-[80%] object-contain hview"
           />
@@ -16,8 +16,8 @@ export default function FileViewer({ activeIndex }) {
           <div className="min-w-full hview flex flex-col items-center justify-center">
             {/* file icon image */}
             <img
-              src={`../../../../images/file/${files[0].type}.png`}
-              alt={files[0].type}
+              src={`../../../../images/file/${files[activeIndex].type}.png`}
+              alt={files[activeIndex].type}
             />
             {/*no preview text*/}
             <h1 className="dark:text-dark_text_2 text-2xl">
@@ -25,7 +25,7 @@ export default function FileViewer({ activeIndex }) {
             </h1>
             {/*file size / type*/}
             <span className="dark:text-dark_text_2">
-              {files[0]?.file?.size} kB - {files[0]?.type}
+              {files[activeIndex]?.file?.size} kB - {files[activeIndex]?.type}
             </span>
           </div>
         )}

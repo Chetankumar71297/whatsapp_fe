@@ -22,7 +22,7 @@ export default function Header({ activeIndex }) {
         </div>
         {/*file name*/}
         <h1 className="dark:text-dark_text_1 text-[15px]">
-          {files[0]?.file?.name}
+          {files[activeIndex]?.file?.name}
         </h1>
         {/*empty tag*/}
         <span></span>

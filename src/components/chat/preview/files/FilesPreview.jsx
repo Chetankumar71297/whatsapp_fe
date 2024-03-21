@@ -6,19 +6,24 @@ import { useState } from "react";
 
 export default function FilesPreview() {
   const [message, setMessage] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
     <div className="relative py-2 w-full flex items-center justify-center">
       {/*container*/}
       <div className="w-full flex flex-col items-center">
         {/*header*/}
-        <Header />
+        <Header activeIndex={activeIndex} />
         {/*viewing selected files*/}
-        <FileViewer />
+        <FileViewer activeIndex={activeIndex} />
         <div className="w-full flex flex-col items-center">
           {/*message input*/}
           <Input message={message} setMessage={setMessage} />
           {/*send and manipulate files*/}
-          <HandleAndSend />
+          <HandleAndSend
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+          />
         </div>
       </div>
     </div>
