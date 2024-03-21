@@ -43,7 +43,8 @@
     border: 3px solid #00a884;
   }
   .hview {
-    height: calc(100vh-280px);
+    height: calc(100vh-290px);
+    padding: 8px 0;
   }
 }
 

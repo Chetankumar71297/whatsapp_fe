@@ -1,15 +1,16 @@
 import { useSelector } from "react-redux";
 import Add from "./Add";
+import { SendIcon } from "../../../../svg";
 
 export default function HandleAndSend({ activeIndex, setActiveIndex }) {
   const { files } = useSelector((state) => state.chat);
 
   return (
-    <div className="w-[97%] items-center justify-center mt-2 border-t dark:border-dark_border_2">
+    <div className="w-[97%] flex items-center justify-between mt-2 border-t dark:border-dark_border_2">
       {/*empty*/}
       <span></span>
       {/*list files*/}
-      <div className="flex gap-x-2">
+      <div className="flex items-center gap-x-2">
         {files.map((file, i) => (
           <div
             key={i}
@@ -37,7 +38,9 @@ export default function HandleAndSend({ activeIndex, setActiveIndex }) {
         <Add setActiveIndex={setActiveIndex} />
       </div>
       {/*send button*/}
-      <div className="bg-green_1 w-16 h-16 mt-2 rounded-full flex items-center justify-center cursor-pointer"></div>
+      <div className="bg-green_1 w-16 h-16 mt-2 rounded-full flex items-center justify-center cursor-pointer">
+        <SendIcon className="fill-white" />
+      </div>
     </div>
   );
 }
