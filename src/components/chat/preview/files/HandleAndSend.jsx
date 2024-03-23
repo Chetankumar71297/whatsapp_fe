@@ -1,9 +1,36 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Add from "./Add";
 import { SendIcon } from "../../../../svg";
+import { uploadFilesOnCloudinary } from "../../../../utils/upload";
+import { useState } from "react";
+import { clearFiles, sendMessage } from "../../../../features/chatSlice";
+import SocketContext from "../../../../context/SocketContext";
+import { ClipLoader } from "react-spinners";
 
-export default function HandleAndSend({ activeIndex, setActiveIndex }) {
-  const { files } = useSelector((state) => state.chat);
+function HandleAndSend({ activeIndex, setActiveIndex, message, socket }) {
+  const dispatch = useDispatch();
+  const { files, activeConversation } = useSelector((state) => state.chat);
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((state) => state.user);
+  const { token } = user;
+
+  const sendMessageHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    //upload files on cloudinary
+    const uploaded_files = await uploadFilesOnCloudinary(files);
+    //send the message
+    const values = {
+      token,
+      message,
+      convo_id: activeConversation._id,
+      files: uploaded_files.length > 0 ? uploaded_files : [],
+    };
+    let newMsg = await dispatch(sendMessage(values));
+    socket.emit("send message", newMsg.payload);
+    setLoading(false);
+    dispatch(clearFiles());
+  };
 
   return (
     <div className="w-[97%] flex items-center justify-between mt-2 border-t dark:border-dark_border_2">
@@ -38,9 +65,25 @@ export default function HandleAndSend({ activeIndex, setActiveIndex }) {
         <Add setActiveIndex={setActiveIndex} />
       </div>
       {/*send button*/}
-      <div className="bg-green_1 w-16 h-16 mt-2 rounded-full flex items-center justify-center cursor-pointer">
-        <SendIcon className="fill-white" />
+      <div
+        className="bg-green_1 w-16 h-16 mt-2 rounded-full flex items-center justify-center cursor-pointer"
+        onClick={(e) => sendMessageHandler(e)}
+      >
+        {loading ? (
+          <ClipLoader color="#E9EDEF" size={25} />
+        ) : (
+          <SendIcon className="fill-white" />
+        )}
       </div>
     </div>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const HandleAndSendWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <HandleAndSend {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default HandleAndSendWithSocket;
