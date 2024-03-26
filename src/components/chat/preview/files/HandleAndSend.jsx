@@ -31,7 +31,10 @@ function HandleAndSend({ activeIndex, setActiveIndex, message, socket }) {
     setLoading(false);
     dispatch(clearFiles());
   };
-
+  //Handle remove file
+  /*const handleRemoveFile = (index) => {
+    dispatch(removeFileFromFiles(index));
+  };*/
   return (
     <div className="w-[97%] flex items-center justify-between mt-2 border-t dark:border-dark_border_2">
       {/*empty*/}
@@ -59,6 +62,13 @@ function HandleAndSend({ activeIndex, setActiveIndex, message, socket }) {
                 className="w-8 h-10 mt-1.5 ml-2.5"
               />
             )}
+            {/*Remove file icon
+            <div
+              className="removeFileIcon hidden"
+              onClick={() => handleRemoveFile(i)}
+            >
+              <CloseIcon className="dark:fill-white absolute right-0 top-0 w-4 h-4" />
+            </div>*/}
           </div>
         ))}
         {/*add another file*/}

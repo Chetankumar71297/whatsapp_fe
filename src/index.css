@@ -46,6 +46,9 @@
     height: calc(100vh-290px);
     padding: 8px 0;
   }
+  /*.fileThumbnail:hover .removeFileIcon {
+    display: block;
+  }*/
 }
 
 /*----Animations----*/
