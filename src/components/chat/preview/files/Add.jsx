@@ -45,12 +45,13 @@ export default function Add() {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (e) => {
+          const type = getFileType(file.type);
           dispatch(
             addFiles({
               file: file,
               fileData:
-                getFileType(file.type) === "IMAGE" ? e.target.result : "",
-              type: getFileType(file.type),
+                type === "IMAGE" || type === "VIDEO" ? e.target.result : "",
+              type,
             })
           );
         };
