@@ -7,7 +7,12 @@ import {
 } from "../features/chatSlice";
 import { ChatContainer, WhatsappHome } from "../components/chat";
 import SocketContext from "../context/SocketContext";
+import Call from "../components/chat/call/Call";
 
+const callData = {
+  receivingCall: false,
+  callEnded: false,
+};
 function Home({ socket }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
@@ -16,6 +21,10 @@ function Home({ socket }) {
   //typing status(typing event)
   const [typing, setTyping] = useState(false);
   const [convoIdInTypingEvent, setConvoIdInTypingEvent] = useState(null);
+  //call
+  const [call, setCall] = useState(callData);
+  const [callAccepted, setCallAccepted] = useState(false);
+  const { receivingCall, callEnded } = call;
 
   //join user into socket io
   useEffect(() => {
@@ -47,26 +56,30 @@ function Home({ socket }) {
     socket.on("stop typing", () => setTyping(false));
   }, []);
   return (
-    <div className="h-screen dark:bg-dark_bg_1 flex items-center justify-center overflow-hidden">
-      {/*container*/}
-      <div className="container h-screen flex py-[19px]">
-        {/*sidebar*/}
-        <Sidebar
-          onlineUsers={onlineUsers}
-          typing={typing}
-          convoIdInTypingEvent={convoIdInTypingEvent}
-        />
-        {activeConversation._id ? (
-          <ChatContainer
+    <>
+      <div className="h-screen dark:bg-dark_bg_1 flex items-center justify-center overflow-hidden">
+        {/*container*/}
+        <div className="container h-screen flex py-[19px]">
+          {/*sidebar*/}
+          <Sidebar
             onlineUsers={onlineUsers}
             typing={typing}
             convoIdInTypingEvent={convoIdInTypingEvent}
           />
-        ) : (
-          <WhatsappHome />
-        )}
+          {activeConversation._id ? (
+            <ChatContainer
+              onlineUsers={onlineUsers}
+              typing={typing}
+              convoIdInTypingEvent={convoIdInTypingEvent}
+            />
+          ) : (
+            <WhatsappHome />
+          )}
+        </div>
       </div>
-    </div>
+      {/*call*/}
+      <Call call={call} setCall={setCall} callAccepted={callAccepted} />
+    </>
   );
 }
 
