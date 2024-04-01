@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Sidebar } from "../components/sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getConversation,
   updateMessagesAndConversation,
@@ -23,8 +23,12 @@ function Home({ socket }) {
   const [convoIdInTypingEvent, setConvoIdInTypingEvent] = useState(null);
   //call
   const [call, setCall] = useState(callData);
+  const [stream, setStream] = useState(callData);
   const [callAccepted, setCallAccepted] = useState(false);
   const { receivingCall, callEnded } = call;
+
+  const myVideoRef = useRef();
+  const friendVideoRef = useRef();
 
   //join user into socket io
   useEffect(() => {
@@ -78,7 +82,14 @@ function Home({ socket }) {
         </div>
       </div>
       {/*call*/}
-      <Call call={call} setCall={setCall} callAccepted={callAccepted} />
+      <Call
+        call={call}
+        setCall={setCall}
+        callAccepted={callAccepted}
+        myVideoRef={myVideoRef}
+        friendVideoRef={friendVideoRef}
+        stream={stream}
+      />
     </>
   );
 }
