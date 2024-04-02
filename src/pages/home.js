@@ -10,6 +10,7 @@ import SocketContext from "../context/SocketContext";
 import Call from "../components/chat/call/Call";
 
 const callData = {
+  socketId: "",
   receivingCall: false,
   callEnded: false,
 };
@@ -25,10 +26,27 @@ function Home({ socket }) {
   const [call, setCall] = useState(callData);
   const [stream, setStream] = useState(callData);
   const [callAccepted, setCallAccepted] = useState(false);
-  const { receivingCall, callEnded } = call;
+  const { receivingCall, callEnded, socketId } = call;
 
   const myVideoRef = useRef();
   const friendVideoRef = useRef();
+
+  //get user media and socket id for video chat
+  useEffect(() => {
+    setUpMedia();
+    socket.on("setup socket", (id) => {
+      setCall({ ...call, socketId: id });
+    });
+  }, []);
+
+  const setUpMedia = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        //myVideoRef.current.srcObject = stream;
+      });
+  };
 
   //join user into socket io
   useEffect(() => {
