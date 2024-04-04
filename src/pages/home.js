@@ -13,7 +13,7 @@ import {
   getConversationName,
   getConversationPicture,
 } from "../utils/chat";
-import Peer from "simple-peer";
+import Peer from "simple-peer"; //helps to create an offer easily
 
 const callData = {
   socketId: "",

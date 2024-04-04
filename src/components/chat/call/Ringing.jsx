@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CloseIcon, ValidIcon } from "../../../svg";
 export default function Ringing({ call, setCall }) {
-  const { receivingCall, callEnded } = call;
+  const { receivingCall, callEnded, name, picture } = call;
   const [timer, setTimer] = useState(0);
   let interval;
   const handleTimer = () => {
@@ -25,13 +25,13 @@ export default function Ringing({ call, setCall }) {
         {/*Call infos*/}
         <div className="flex items-center gap-x-2">
           <img
-            src="https://png.pngtree.com/background/20230528/original/pngtree-an-animated-face-of-a-boy-with-headphones-picture-image_2781319.jpg"
+            src={picture}
             alt={`caller profile`}
             className="w-28 h-28 rounded-full"
           />
           <div>
             <h1 className="dark:text-white">
-              <b>Chetan kumar</b>
+              <b>{name}</b>
             </h1>
             <span className="dark:text-dark_text_2">Whatsapp video...</span>
           </div>
