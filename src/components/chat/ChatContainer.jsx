@@ -11,6 +11,7 @@ export default function ChatContainer({
   onlineUsers,
   typing,
   convoIdInTypingEvent,
+  callUser,
 }) {
   const dispatch = useDispatch();
 
@@ -40,6 +41,7 @@ export default function ChatContainer({
             user,
             activeConversation.users
           )}
+          callUser={callUser}
         />
         {files.length > 0 ? (
           <FilesPreview />

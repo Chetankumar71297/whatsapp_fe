@@ -1,12 +1,18 @@
 import { useSelector } from "react-redux";
-import { DotsIcon, SearchLargeIcon } from "../../../svg";
+import {
+  CallIcon,
+  DotsIcon,
+  SearchLargeIcon,
+  VideoCallIcon,
+} from "../../../svg";
 import { capitalize } from "../../../utils/string";
 import {
   getConversationName,
   getConversationPicture,
 } from "../../../utils/chat";
+import SocketContext from "../../../context/SocketContext";
 
-export default function ChatHeader({ online }) {
+function ChatHeader({ online, callUser, socket }) {
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
   const { name, picture, users } = activeConversation;
@@ -39,6 +45,20 @@ export default function ChatHeader({ online }) {
         </div>
         {/*Right*/}
         <ul className="flex items-center gap-x-2.5">
+          {1 == 1 ? (
+            <li onClick={() => callUser()}>
+              <button className="btn">
+                <VideoCallIcon />
+              </button>
+            </li>
+          ) : null}
+          {1 == 1 ? (
+            <li>
+              <button className="btn">
+                <CallIcon />
+              </button>
+            </li>
+          ) : null}
           <li>
             <button className="btn">
               <SearchLargeIcon className="dark:fill-dark_svg_1" />
@@ -54,3 +74,12 @@ export default function ChatHeader({ online }) {
     </div>
   );
 }
+
+//Before useContext existed, there was an older way to read context:(SomeContext.Consumer)
+//It is Legacy way
+const ChatHeaderWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <ChatHeader {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+export default ChatHeaderWithSocket;

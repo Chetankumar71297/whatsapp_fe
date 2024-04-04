@@ -8,11 +8,19 @@ import {
 import { ChatContainer, WhatsappHome } from "../components/chat";
 import SocketContext from "../context/SocketContext";
 import Call from "../components/chat/call/Call";
+import {
+  getConversationId,
+  getConversationName,
+  getConversationPicture,
+} from "../utils/chat";
+import Peer from "simple-peer";
 
 const callData = {
   socketId: "",
   receivingCall: false,
   callEnded: false,
+  name: "",
+  picture: "",
 };
 function Home({ socket }) {
   const dispatch = useDispatch();
@@ -24,7 +32,7 @@ function Home({ socket }) {
   const [convoIdInTypingEvent, setConvoIdInTypingEvent] = useState(null);
   //call
   const [call, setCall] = useState(callData);
-  const [stream, setStream] = useState(callData);
+  const [stream, setStream] = useState();
   const [callAccepted, setCallAccepted] = useState(false);
   const { receivingCall, callEnded, socketId } = call;
 
@@ -37,6 +45,16 @@ function Home({ socket }) {
     socket.on("setup socket", (id) => {
       setCall({ ...call, socketId: id });
     });
+    socket.on("friend calling", (data) => {
+      setCall({
+        ...call,
+        socketId: data.from,
+        name: data.name,
+        picture: data.picture,
+        signal: data.signal,
+        receivingCall: true,
+      });
+    });
   }, []);
 
   const setUpMedia = () => {
@@ -44,8 +62,32 @@ function Home({ socket }) {
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
-        //myVideoRef.current.srcObject = stream;
       });
+  };
+  const callUser = () => {
+    enableMedia();
+    setCall({
+      ...call,
+      name: getConversationName(user, activeConversation.users),
+      picture: getConversationPicture(user, activeConversation.users),
+    });
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream: stream,
+    });
+    peer.on("signal", (data) => {
+      socket.emit("call user", {
+        userToCall: getConversationId(user, activeConversation.users),
+        signal: data,
+        from: socketId,
+        name: user.name,
+        picture: user.picture,
+      });
+    });
+  };
+  const enableMedia = () => {
+    myVideoRef.current.srcObject = stream;
   };
 
   //join user into socket io
@@ -93,6 +135,7 @@ function Home({ socket }) {
               onlineUsers={onlineUsers}
               typing={typing}
               convoIdInTypingEvent={convoIdInTypingEvent}
+              callUser={callUser}
             />
           ) : (
             <WhatsappHome />
