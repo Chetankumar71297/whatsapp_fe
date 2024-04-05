@@ -11,12 +11,12 @@ export default function Call({
   myVideoRef,
   friendVideoRef,
   stream,
+  answerCall,
 }) {
   const { receivingCall, callEnded, name, picture } = call;
   const [showActions, setShowActions] = useState(false);
   return (
     <>
-      {console.log(receivingCall)}
       <div
         className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[550px] z-10 rounded-2xl overflow-hidden callbg ${
           receivingCall && !callAccepted ? "hidden" : ""
@@ -36,33 +36,37 @@ export default function Call({
           </div>
           <div>
             {/*friend video*/}
-            <div>
-              <video
-                ref={friendVideoRef}
-                playsInline
-                muted
-                autoPlay
-                className="largeVideoCall"
-              ></video>
-            </div>
+            {callAccepted && !callEnded ? (
+              <div>
+                <video
+                  ref={friendVideoRef}
+                  playsInline
+                  muted
+                  autoPlay
+                  className="largeVideoCall"
+                ></video>
+              </div>
+            ) : null}
             {/*my video*/}
-            <div>
-              <video
-                ref={myVideoRef}
-                playsInline
-                muted
-                autoPlay
-                className={`smallVideoCall ${
-                  showActions ? "moveVideoCall" : ""
-                }`}
-              ></video>
-            </div>
+            {stream ? (
+              <div>
+                <video
+                  ref={myVideoRef}
+                  playsInline
+                  muted
+                  autoPlay
+                  className={`smallVideoCall ${
+                    showActions ? "moveVideoCall" : ""
+                  }`}
+                ></video>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
       {/*ringing*/}
       {receivingCall && !callAccepted && (
-        <Ringing call={call} setCall={setCall} />
+        <Ringing call={call} setCall={setCall} answerCall={answerCall} />
       )}
     </>
   );

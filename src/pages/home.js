@@ -21,6 +21,7 @@ const callData = {
   callEnded: false,
   name: "",
   picture: "",
+  signal: "",
 };
 function Home({ socket }) {
   const dispatch = useDispatch();
@@ -33,11 +34,13 @@ function Home({ socket }) {
   //call
   const [call, setCall] = useState(callData);
   const [stream, setStream] = useState();
+  const [show, setShow] = useState(false);
   const [callAccepted, setCallAccepted] = useState(false);
   const { receivingCall, callEnded, socketId } = call;
 
   const myVideoRef = useRef();
   const friendVideoRef = useRef();
+  const connectionRef = useRef();
 
   //get user media and socket id for video chat
   useEffect(() => {
@@ -64,6 +67,8 @@ function Home({ socket }) {
         setStream(stream);
       });
   };
+
+  //calling functionality
   const callUser = () => {
     enableMedia();
     setCall({
@@ -85,9 +90,40 @@ function Home({ socket }) {
         picture: user.picture,
       });
     });
+    peer.on("stream", (stream) => {
+      friendVideoRef.current.srcObject = stream;
+    });
+    socket.on("call accepted", (signal) => {
+      setCallAccepted(true);
+      peer.signal(signal);
+    });
+
+    connectionRef.current = peer;
   };
+
   const enableMedia = () => {
     myVideoRef.current.srcObject = stream;
+    setShow(true);
+  };
+
+  //answering call functionality
+  const answerCall = () => {
+    enableMedia();
+    setCallAccepted(true);
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream: stream,
+    });
+    peer.on("signal", (data) => {
+      socket.emit("answer call", { signal: data, respondingTo: call.socketId });
+    });
+    peer.on("stream", (stream) => {
+      friendVideoRef.current.srcObject = stream;
+    });
+    peer.signal(call.signal);
+
+    connectionRef.current = peer;
   };
 
   //join user into socket io
@@ -143,14 +179,17 @@ function Home({ socket }) {
         </div>
       </div>
       {/*call*/}
-      <Call
-        call={call}
-        setCall={setCall}
-        callAccepted={callAccepted}
-        myVideoRef={myVideoRef}
-        friendVideoRef={friendVideoRef}
-        stream={stream}
-      />
+      <div className={(show || call.signal) && !call.callEnded ? "" : "hidden"}>
+        <Call
+          call={call}
+          setCall={setCall}
+          callAccepted={callAccepted}
+          myVideoRef={myVideoRef}
+          friendVideoRef={friendVideoRef}
+          stream={stream}
+          answerCall={answerCall}
+        />
+      </div>
     </>
   );
 }
