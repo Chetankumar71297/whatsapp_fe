@@ -188,6 +188,7 @@ function Home({ socket }) {
           friendVideoRef={friendVideoRef}
           stream={stream}
           answerCall={answerCall}
+          show={show}
         />
       </div>
     </>
