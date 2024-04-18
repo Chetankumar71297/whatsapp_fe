@@ -33,18 +33,18 @@ function Home({ socket }) {
   const [convoIdInTypingEvent, setConvoIdInTypingEvent] = useState(null);
   //call
   const [call, setCall] = useState(callData);
-  const [stream, setStream] = useState();
+  const [stream, setStream] = useState(null);
   const [show, setShow] = useState(false);
   const [callAccepted, setCallAccepted] = useState(false);
   const { receivingCall, callEnded, socketId } = call;
 
-  const myVideoRef = useRef();
-  const friendVideoRef = useRef();
-  const connectionRef = useRef();
+  const myVideoRef = useRef(null);
+  const friendVideoRef = useRef(null);
+  const connectionRef = useRef(null);
 
   //get user media and socket id for video chat
   useEffect(() => {
-    setUpMedia();
+    //setUpMedia();
     socket.on("setup socket", (id) => {
       setCall({ ...call, socketId: id });
     });
@@ -57,73 +57,171 @@ function Home({ socket }) {
         signal: data.signal,
         receivingCall: true,
       });
+      setShow(true);
+    });
+    socket.on("end call", () => {
+      console.log(stream);
+      if (stream) {
+        console.log("hi3");
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      // Close the peer connection
+      if (connectionRef.current) {
+        console.log("hi2");
+        connectionRef.current.destroy(); // Close the peer connection
+      }
+
+      // Stop the local stream
+      /*if (stream) {
+        console.log("hi3");
+        stream.getTracks().forEach((track) => track.stop());
+      }*/
+      setCallAccepted(false);
+      setShow(false);
+      setStream(null);
+      setCall({ ...call, callEnded: true, receivingCall: false });
     });
   }, []);
 
-  const setUpMedia = () => {
+  /*const setUpMedia = async (peer) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        setStream(stream);
+        peer.addStream(stream);
+        setShow(true);
+        enableMedia(stream);
       });
-  };
+  };*/
 
   //calling functionality
   const callUser = () => {
-    enableMedia();
-    setCall({
-      ...call,
-      name: getConversationName(user, activeConversation.users),
-      picture: getConversationPicture(user, activeConversation.users),
-    });
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: stream,
-    });
-    peer.on("signal", (data) => {
-      socket.emit("call user", {
-        userToCall: getConversationId(user, activeConversation.users),
-        signal: data,
-        from: socketId,
-        name: user.name,
-        picture: user.picture,
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setShow(true);
+        setStream(stream);
+        //enableMedia(stream);
+        setCall({
+          ...call,
+          name: getConversationName(user, activeConversation.users),
+          picture: getConversationPicture(user, activeConversation.users),
+        });
+        const peer = new Peer({
+          initiator: true,
+          trickle: false,
+          stream: stream,
+        });
+        // peer.addStream(stream);
+        peer.on("signal", (data) => {
+          //setUpMedia(peer);
+          socket.emit("call user", {
+            userToCall: getConversationId(user, activeConversation.users),
+            signal: data,
+            from: socketId,
+            name: user.name,
+            picture: user.picture,
+          });
+        });
+        peer.on("stream", (stream) => {
+          if (peer) {
+            friendVideoRef.current.srcObject = stream;
+          }
+        });
+        //setUpMedia(peer);
+        socket.on("call accepted", (signal) => {
+          setCall({
+            ...call,
+            signal: signal,
+          });
+          setCallAccepted(true);
+          peer.signal(signal);
+          console.log(peer);
+        });
+        console.log(peer);
+        //peer.removeAllListeners();
+        connectionRef.current = peer;
       });
-    });
-    peer.on("stream", (stream) => {
-      friendVideoRef.current.srcObject = stream;
-    });
-    socket.on("call accepted", (signal) => {
-      setCallAccepted(true);
-      peer.signal(signal);
-    });
-
-    connectionRef.current = peer;
+    //enableMedia();
+    // setShow(true)
   };
 
-  const enableMedia = () => {
+  const enableMedia = (stream) => {
     myVideoRef.current.srcObject = stream;
-    setShow(true);
+    //setShow(true);
   };
 
   //answering call functionality
   const answerCall = () => {
-    enableMedia();
-    setCallAccepted(true);
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: stream,
-    });
-    peer.on("signal", (data) => {
-      socket.emit("answer call", { signal: data, respondingTo: call.socketId });
-    });
-    peer.on("stream", (stream) => {
-      friendVideoRef.current.srcObject = stream;
-    });
-    peer.signal(call.signal);
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setCallAccepted(true);
+        setStream(stream);
 
-    connectionRef.current = peer;
+        const peer = new Peer({
+          initiator: false,
+          trickle: false,
+          stream: stream,
+        });
+        //peer.addStream(stream);
+        peer.on("signal", (data) => {
+          console.log(data);
+          socket.emit("answer call", {
+            signal: data,
+            respondingTo: call.socketId,
+          });
+        });
+        peer.on("stream", (stream) => {
+          friendVideoRef.current.srcObject = stream;
+        });
+        //setUpMedia(peer);
+        peer.signal(call.signal);
+
+        connectionRef.current = peer;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  //end call
+  const endCall = () => {
+    console.log("1");
+    // Close the peer connection
+    if (connectionRef.current) {
+      connectionRef.current.destroy(); // Close the peer connection
+    }
+
+    // Stop the local stream
+    if (stream) {
+      console.log(stream);
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    //connectionRef?.current?.removeStream(stream);
+    //connectionRef?.current?.removeAllListeners();
+    //connectionRef?.current?.destroy();
+    console.log("2");
+    if (call.receivingCall) {
+      socket.emit("end call", {
+        userIdOfUserToRespond: null,
+        socketIdOfUserToRespond: call.socketId,
+      });
+    } else {
+      socket.emit("end call", {
+        userIdOfUserToRespond: getConversationId(
+          user,
+          activeConversation.users
+        ),
+        socketIdOfUserToRespond: null,
+      });
+    }
+
+    setCallAccepted(false);
+    setShow(false);
+    setStream(null);
+    setCall({ ...call, callEnded: true, receivingCall: false });
+    //myVideoRef.current.srcObject = null;
+    console.log("3");
   };
 
   //join user into socket io
@@ -179,7 +277,7 @@ function Home({ socket }) {
         </div>
       </div>
       {/*call*/}
-      <div className={(show || call.signal) && !call.callEnded ? "" : "hidden"}>
+      <div className={show ? "" : "hidden"}>
         <Call
           call={call}
           setCall={setCall}
@@ -189,6 +287,8 @@ function Home({ socket }) {
           stream={stream}
           answerCall={answerCall}
           show={show}
+          endCall={endCall}
+          enableMedia={enableMedia}
         />
       </div>
     </>

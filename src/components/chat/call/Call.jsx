@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CallActions from "./CallActions";
 import Header from "./Header";
 import Ringing from "./Ringing";
@@ -13,10 +13,18 @@ export default function Call({
   stream,
   answerCall,
   show,
+  endCall,
+  enableMedia,
 }) {
   const { receivingCall, callEnded, name, picture } = call;
   const [showActions, setShowActions] = useState(false);
   const [toggle, setToggle] = useState(false);
+
+  useEffect(() => {
+    if (myVideoRef.current || (callAccepted && myVideoRef.current)) {
+      enableMedia(stream);
+    }
+  }, [stream, show, myVideoRef, callAccepted]);
   return (
     <>
       <div
@@ -34,7 +42,7 @@ export default function Call({
             {/*video chat screen*/}
             <VideoChatScreen name={name} />
             {/*call actions*/}
-            {showActions ? <CallActions /> : null}
+            {showActions ? <CallActions endCall={endCall} /> : null}
           </div>
           <div>
             {/*friend video*/}
@@ -74,7 +82,12 @@ export default function Call({
       </div>
       {/*ringing*/}
       {receivingCall && !callAccepted ? (
-        <Ringing call={call} setCall={setCall} answerCall={answerCall} />
+        <Ringing
+          call={call}
+          setCall={setCall}
+          answerCall={answerCall}
+          endCall={endCall}
+        />
       ) : null}
       {/*ringtone*/}
       {!callAccepted && show ? (
