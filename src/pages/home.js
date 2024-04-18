@@ -71,27 +71,16 @@ function Home({ socket }) {
         connectionRef.current.destroy(); // Close the peer connection
       }
 
-      // Stop the local stream
-      /*if (stream) {
-        console.log("hi3");
-        stream.getTracks().forEach((track) => track.stop());
-      }*/
+      myVideoRef.current = null;
+      friendVideoRef.current = null;
       setCallAccepted(false);
       setShow(false);
       setStream(null);
       setCall({ ...call, callEnded: true, receivingCall: false });
+      //myVideoRef.current.srcObject = null;
+      //friendVideoRef.current.srcObject = null;
     });
   }, []);
-
-  /*const setUpMedia = async (peer) => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        peer.addStream(stream);
-        setShow(true);
-        enableMedia(stream);
-      });
-  };*/
 
   //calling functionality
   const callUser = () => {
@@ -123,7 +112,7 @@ function Home({ socket }) {
           });
         });
         peer.on("stream", (stream) => {
-          if (peer) {
+          if (peer && friendVideoRef) {
             friendVideoRef.current.srcObject = stream;
           }
         });
@@ -189,7 +178,9 @@ function Home({ socket }) {
     console.log("1");
     // Close the peer connection
     if (connectionRef.current) {
+      connectionRef.current.removeAllListeners();
       connectionRef.current.destroy(); // Close the peer connection
+      socket.off("call accepted"); //removing this listener because if not removed then it runs with previous signal object(or answer received by remote peer). This phenomena leads to an error:- (cannot signal after peer is destroyed) from peer.signal() method
     }
 
     // Stop the local stream
@@ -216,12 +207,14 @@ function Home({ socket }) {
       });
     }
 
+    myVideoRef.current = null;
+    friendVideoRef.current = null;
     setCallAccepted(false);
     setShow(false);
     setStream(null);
     setCall({ ...call, callEnded: true, receivingCall: false });
     //myVideoRef.current.srcObject = null;
-    console.log("3");
+    //friendVideoRef.current.srcObject = null;
   };
 
   //join user into socket io
