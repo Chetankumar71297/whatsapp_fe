@@ -149,6 +149,35 @@ function Home({ socket }) {
 
         const peer = new Peer({
           initiator: false,
+          config: {
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:global.stun.twilio.com:3478" },
+              {
+                urls: "stun:stun.relay.metered.ca:80",
+              },
+              {
+                urls: "turn:in.relay.metered.ca:80",
+                username: "89d518048543f6f73ea7570c",
+                credential: "JEn0txk7UtE3WT7w",
+              },
+              {
+                urls: "turn:in.relay.metered.ca:80?transport=tcp",
+                username: "89d518048543f6f73ea7570c",
+                credential: "JEn0txk7UtE3WT7w",
+              },
+              {
+                urls: "turn:in.relay.metered.ca:443",
+                username: "89d518048543f6f73ea7570c",
+                credential: "JEn0txk7UtE3WT7w",
+              },
+              {
+                urls: "turns:in.relay.metered.ca:443?transport=tcp",
+                username: "89d518048543f6f73ea7570c",
+                credential: "JEn0txk7UtE3WT7w",
+              },
+            ],
+          },
           trickle: false,
           stream: stream,
         });
