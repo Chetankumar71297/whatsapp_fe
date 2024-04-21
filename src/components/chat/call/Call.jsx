@@ -51,7 +51,6 @@ export default function Call({
                 <video
                   ref={friendVideoRef}
                   playsInline
-                  muted
                   autoPlay
                   className={toggle ? "smallVideoCall" : "largeVideoCall"}
                   onClick={() => {
