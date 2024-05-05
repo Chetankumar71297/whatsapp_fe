@@ -6,7 +6,7 @@
 
 ### `Create .env file in project directory with values:`
 
-REACT_APP_API_ENDPOINT=http://localhost:<PORT>/api/v1 \
+REACT_APP_API_ENDPOINT=http://localhost:PORT/api/v1 \
 REACT_APP_CLOUD_NAME=(It is Cloudinary product environment cloud name) \
 REACT_APP_CLOUD_SECRET=(It is Cloudinary upload preset for unsigned uploading)
 
