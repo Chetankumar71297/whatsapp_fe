@@ -26,6 +26,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-## `Live demo of the project: [https://assignment-fe.onrender.com](https://assignment-fe.onrender.com)`
+## `Live demo of the project:`
+
+[https://assignment-fe.onrender.com](https://assignment-fe.onrender.com)
 
 ### `Note: Node backend is deployed on free tier provided by Render, so, server goes to sleep if not active for 15 minutes. It takes around 30-60 seconds to spin up the server,so after clicking the link just wait for some time.`
